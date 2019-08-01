@@ -8,7 +8,6 @@ class Api::V1::BandsController < ApplicationController
     def show 
       @band = Band.find(params[:id]) 
       if @band
-        # byebug
         render json: { band: BandSerializer.new(@band) }, status: :accepted
       else
         render json: { error: @band.errors }, status: :not_acceptable
@@ -28,7 +27,11 @@ class Api::V1::BandsController < ApplicationController
     end
 
     def index
-      @bands = Band.all
+      if params[:search]
+      @bands = Band.where('name LIKE ?', "%#{params[:search]}%")
+      else
+        @bands = Band.all
+      end 
       render json: @bands
     end 
 

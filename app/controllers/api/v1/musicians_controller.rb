@@ -6,7 +6,8 @@ class Api::V1::MusiciansController < ApplicationController
     end
   
     def show 
-      render json: { musician: MusicianSerializer.new(current_user) }, status: :accepted
+      @musician = Musician.find(params[:id])
+      render json: { musician: MusicianSerializer.new(@musician) }, status: :accepted
     end
 
     def create
@@ -21,11 +22,16 @@ class Api::V1::MusiciansController < ApplicationController
       end
   
       def index
-        @musicians = Musician.all
+        if params[:search]
+        @musicians = Musician.where('name LIKE ?', "%#{params[:search]}%")
+        else
+          @musicians = Musician.all
+        end 
         render json: @musicians
       end 
   
       def update
+      
         @musician = Musician.find(musician_params[:id])
         if @musician.update(musician_params)
           render json: @musician
@@ -38,7 +44,7 @@ class Api::V1::MusiciansController < ApplicationController
       private
 
       def musician_params
-        params.require(:musician).permit(:id, :username, :password, :email, :name, :instruments, :genres, :spotify, :soundcloud, :instagram, :facebook, :image_url)
+        params.require(:musician).permit(:id, :username, :search, :password, :email, :name, :instruments, :genres, :spotify, :soundcloud, :instagram, :facebook, :bio, :image_url)
       end
 
     end

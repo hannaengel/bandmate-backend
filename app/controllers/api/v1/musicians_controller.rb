@@ -24,7 +24,7 @@ class Api::V1::MusiciansController < ApplicationController
       def index
         if params[:search]
         @musicians = Musician.where('name LIKE ?', "%#{params[:search]}%")
-        else
+        elsif params[:instruments]
           @musicians = Musician.all
         end 
         render json: @musicians
